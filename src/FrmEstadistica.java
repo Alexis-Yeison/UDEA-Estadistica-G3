@@ -18,6 +18,8 @@ public class FrmEstadistica extends JFrame{
 
     private JTextField txtDato;
     private JList lstMuestra;
+    private JComboBox cmbEstadistica;
+    private JTextField txtEstadistica;
 
     //Metodo constructor
     public FrmEstadistica(){
@@ -56,14 +58,14 @@ public class FrmEstadistica extends JFrame{
         btnEstadistica.setBounds(20,200,100,25);
         getContentPane().add(btnEstadistica);
 
-        JComboBox cmbEstadistica = new JComboBox();
+        cmbEstadistica = new JComboBox();
         String[] optioStrings = new String[]{"Sumatoria", "Promedio", "Desviacion", "Maximo", "Minimo", "Moda"};
         DefaultComboBoxModel dComboBoxModel = new DefaultComboBoxModel(optioStrings);
         cmbEstadistica.setModel(dComboBoxModel);
         cmbEstadistica.setBounds(130,200,100,25);
         getContentPane().add(cmbEstadistica);
 
-        JTextField txtEstadistica = new JTextField();
+        txtEstadistica = new JTextField();
         txtEstadistica.setBounds(250,200,100,25);
         txtEstadistica.setEnabled(false);
         getContentPane().add(txtEstadistica);
@@ -119,11 +121,77 @@ public class FrmEstadistica extends JFrame{
     }
 
     private void quitarDato(){
-        JOptionPane.showMessageDialog(null, "Hizo clic en Quitar");
+        // JOptionPane.showMessageDialog(null, "Hizo clic en Quitar");
+        if(lstMuestra.getSelectedIndex() >= 0){
+            for(int i=lstMuestra.getSelectedIndex(); i < totalDatos - 1; i++){
+                muestra[i] = muestra[i + 1];
+            }
+            totalDatos --;
+            mostrarDatos();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Debe seleccionar el dato a quitar");
+        }
+    }
+
+    private double sumatoria(){
+        double suma = 0;
+        for (int i=0; i<totalDatos; i++){
+            suma += muestra[i];    
+        }
+
+        return suma;
+    }
+
+    private double promedio(){
+        return totalDatos > 0 ? sumatoria()/totalDatos : 0;
+        }
+
+    private double desviacion(){
+        if(totalDatos > 1){
+            double suma = 0;
+            double promedioActual = promedio();
+            for(int i=0; i<totalDatos; i++){
+                suma += Math.abs(promedioActual - muestra[i]);
+            }
+            return suma/(totalDatos - 1);
+        }
+        else{
+            return 0;
+        }
+    }
+
+    private double maximo(){
+        if(totalDatos > 0){
+            double actualMaximo = muestra[0];
+            for(int i=1; i<totalDatos; i++){
+                if(muestra[i] > actualMaximo){
+                    actualMaximo = muestra[i];
+                }
+            }
+            return actualMaximo;
+        }
+        else{
+            return 0;
+        }
     }
 
     private void calcularEstadistica(){
-        JOptionPane.showMessageDialog(null, "Hizo clic en Calcular estadistica");
+        // JOptionPane.showMessageDialog(null, "Hizo clic en Calcular estadistica");
+        switch (cmbEstadistica.getSelectedIndex()){
+            case 0:
+                txtEstadistica.setText(String.valueOf(sumatoria()));
+                break;
+            case 1:
+                txtEstadistica.setText(String.valueOf(promedio()));
+                break;
+            case 2:
+                txtEstadistica.setText(String.valueOf(desviacion()));
+                break;
+            case 3:
+                txtEstadistica.setText(String.valueOf(maximo()));
+                break;
+        }
     }
 
 }
